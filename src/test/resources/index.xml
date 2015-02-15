@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>
+            Title
+        </title>
+    </properties>
+    <body>
+        <section name="Section 1 title">
+            <p>
+                Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod 
+                tincidunt ut laoreet dolore magna aliquam erat volutpat. <strong>  bold text </strong>, 
+                quis nostrud exerci tation <code>ullamcorper</code> suscipit lobortis nisl ut aliquip ex ea commodo consequat. 
+            </p>
+            <p>    
+                Lorem ipsum dolor sit amet, <b>consectetuer</b> adipiscing elit, <em> italic text </em> 
+                tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, 
+                quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+                <ul>
+                    <li>List item 1</li>
+                    <li>List item 2</li>
+                    <li>List item 3</li>
+                </ul> 
+            </p>
+            <p>
+                <table>
+                    <tr>
+                        <th>Column Title 1</th>
+                        <th>Column Title 2</th>
+                    </tr>
+                    <tr>
+                        <td>Row 1 - Column 1</td>
+                        <td>Row 1 - Column 2</td>
+                    </tr>
+                    <tr>
+                        <td>Row 2 - Column 1</td>
+                        <td>Row 2 - Column 2</td>
+                    </tr>
+                </table>
+            </p>
+        </section>
+        <section name="Section 2 title">
+            <subsection name="Subsection 2-1 title">
+                <p>
+                    <a href="http://dev.lutece.paris.fr">Lutece Link</a> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                </p>
+            </subsection>	
+            <subsection name="Subsection 2-2 title">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                </p>
+                <p>
+                    <div class="source">
+                        <pre>
+public void foo( String name ) {
+    System.out.println( name );
+}
+                        </pre>
+                    </div>
+                </p>
+            </subsection>	
+        </section>
+    </body>
+</document>
+          

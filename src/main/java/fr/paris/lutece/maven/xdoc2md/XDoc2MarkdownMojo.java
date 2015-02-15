@@ -35,14 +35,11 @@ package fr.paris.lutece.maven.xdoc2md;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -79,12 +76,7 @@ public class XDoc2MarkdownMojo extends AbstractMojo
     {
         try
         {
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-            SAXParser saxParser = saxParserFactory.newSAXParser();
-            XDoc2MarkdownHandler handler = new XDoc2MarkdownHandler();
-            saxParser.parse(new InputSource(new FileReader(strInput)), handler);
-            String strDocument = handler.getDocument();
-            System.out.println("document : " + strDocument);
+            String strDocument = XDoc2MarkdownService.convert( new FileInputStream(strInput));
             BufferedWriter writer = new BufferedWriter(new FileWriter(strOutput));
             writer.write(strDocument);
             writer.close();

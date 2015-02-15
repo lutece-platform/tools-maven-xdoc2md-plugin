@@ -2,22 +2,23 @@
 <document>
     <properties>
         <title>
-            xDoc2MD Maven Plugin
+            xDoc2md Maven Plugin
         </title>
     </properties>
     <body>
         <section name="Introduction">
             <p>
                 This Maven plugin can convert xDoc files (used by Maven Site) to 
-                Markdown files (Wiki format used by GitHub).
+                <a href="http://daringfireball.net/projects/markdown/">Markdown</a> 
+                files (Wiki format used by <a href="https://guides.github.com/features/mastering-markdown/">GitHub</a>).
             </p>
             <p>
-                The goal <strong> readme </strong> can create the <strong> README.md </strong> file
-                from the <strong> src/site/xdoc/index.xml </strong>.  
+                The goal <strong>readme</strong> can create the <code>README.md</code> file
+                from the <code>src/site/xdoc/index.xml</code>.  
             </p>
             <subsection name="Usage">
                 <p>
-                    Download the project and install the plugin:
+                    Download this project and install the plugin:
                 </p>
                 <div class="source">
                     <pre>
@@ -26,7 +27,7 @@
                 </div>
                 <p>
                     Then go into your project's directory where you want to create
-                    or update the README.md file.
+                    or update the <code>README.md</code> file.
                 </p>
                 <p>
                     Type the following command to generate the README.md :

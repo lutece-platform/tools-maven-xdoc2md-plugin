@@ -43,12 +43,15 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XDoc2MarkdownHandler extends DefaultHandler
 {
+
     private static final String TAG_TITLE = "title";
     private static final String TAG_SECTION = "section";
     private static final String TAG_SUBSECTION = "subsection";
     private static final String TAG_STRONG = "strong";
     private static final String TAG_BOLD = "b";
     private static final String TAG_EM = "em";
+    private static final String TAG_CODE = "code";
+    private static final String TAG_PARAGRAPH = "p";
     private static final String TAG_PRE = "pre";
     private static final String TAG_LI = "li";
     private static final String TAG_UL = "ul";
@@ -56,125 +59,153 @@ public class XDoc2MarkdownHandler extends DefaultHandler
     private static final String TAG_TH = "th";
     private static final String TAG_TD = "td";
     private static final String TAG_TABLE = "table";
+    private static final String TAG_ANCHOR = "a";
     private static final String ATTRIBUTE_NAME = "name";
+    private static final String ATTRIBUTE_HREF = "href";
     private StringBuilder _sbDocument = new StringBuilder();
     private boolean _bTitle;
     private boolean _bPRE;
     private int _nTableRowCount;
     private int _nTableColumnCount;
+    private String _strLink;
+    private boolean _bAnchor;
 
     /**
      * Returns The MD Document
+     *
      * @return The MD Document
      */
-    public String getDocument(  )
+    public String getDocument()
     {
         return _sbDocument.toString();
     }
 
-
     /**
      * {@inheritDoc }
      */
     @Override
-    public void startElement( String uri, String localName, String qName, Attributes attributes )
-        throws SAXException
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+            throws SAXException
     {
-        if ( qName.equalsIgnoreCase( TAG_TITLE ) )
+        if (qName.equalsIgnoreCase(TAG_TITLE))
         {
             _bTitle = true;
         }
-        else if ( qName.equalsIgnoreCase( TAG_SECTION ) )
+        else if (qName.equalsIgnoreCase(TAG_SECTION))
         {
-           _sbDocument.append( "\n##").append( attributes.getValue( ATTRIBUTE_NAME )).append("\n");
+            _sbDocument.append("\n##").append(attributes.getValue(ATTRIBUTE_NAME)).append("\n");
         }
-        else if ( qName.equalsIgnoreCase( TAG_SUBSECTION ))
+        else if (qName.equalsIgnoreCase(TAG_SUBSECTION))
         {
-           _sbDocument.append( "\n###").append( attributes.getValue( ATTRIBUTE_NAME )).append("\n");
+            _sbDocument.append("\n###").append(attributes.getValue(ATTRIBUTE_NAME)).append("\n");
         }
-        else if ( qName.equalsIgnoreCase( TAG_STRONG ) || qName.equalsIgnoreCase( TAG_BOLD ))
+        else if (qName.equalsIgnoreCase(TAG_STRONG) || qName.equalsIgnoreCase(TAG_BOLD))
         {
-           _sbDocument.append( " **" );
+            _sbDocument.append(" **");
         }
-        else if ( qName.equalsIgnoreCase( TAG_EM ) )
+        else if (qName.equalsIgnoreCase(TAG_EM))
         {
-           _sbDocument.append( " *" );
+            _sbDocument.append(" *");
         }
-        else if ( qName.equalsIgnoreCase( TAG_PRE ) )
+        else if (qName.equalsIgnoreCase(TAG_CODE))
         {
-           _sbDocument.append( "\n```\n" );
-           _bPRE = true;
+            _sbDocument.append(" `");
         }
-        else if ( qName.equalsIgnoreCase( TAG_LI ) )
+        else if (qName.equalsIgnoreCase(TAG_PARAGRAPH))
         {
-           _sbDocument.append( "\n* " );
+            _sbDocument.append("\n");
         }
-        else if ( qName.equalsIgnoreCase( TAG_UL ) )
+        else if (qName.equalsIgnoreCase(TAG_PRE))
         {
-           _sbDocument.append( "\n " );
+            _sbDocument.append("\n```\n");
+            _bPRE = true;
         }
-        else if ( qName.equalsIgnoreCase( TAG_TABLE ) )
+        else if (qName.equalsIgnoreCase(TAG_LI))
         {
-           _sbDocument.append( "\n" );
-           _nTableRowCount = 0;
-           _nTableColumnCount = 0;
+            _sbDocument.append("\n* ");
         }
-        else if ( qName.equalsIgnoreCase( TAG_TR ) )
+        else if (qName.equalsIgnoreCase(TAG_UL))
         {
-            _nTableRowCount ++;
-       }
-        else if ( qName.equalsIgnoreCase( TAG_TH ))
-        {
-           _sbDocument.append( "| " );
-           _nTableColumnCount ++;
+            _sbDocument.append("\n ");
         }
-        else if ( qName.equalsIgnoreCase( TAG_TD ))
+        else if (qName.equalsIgnoreCase(TAG_TABLE))
         {
-           _sbDocument.append( "| " );
-           _nTableColumnCount ++;
-       }
-
+            _sbDocument.append("\n");
+            _nTableRowCount = 0;
+            _nTableColumnCount = 0;
+        }
+        else if (qName.equalsIgnoreCase(TAG_TR))
+        {
+            _nTableRowCount++;
+        }
+        else if (qName.equalsIgnoreCase(TAG_TH))
+        {
+            _sbDocument.append("| ");
+            _nTableColumnCount++;
+        }
+        else if (qName.equalsIgnoreCase(TAG_TD))
+        {
+            _sbDocument.append("| ");
+            _nTableColumnCount++;
+        }
+        else if (qName.equalsIgnoreCase(TAG_ANCHOR))
+        {
+            _bAnchor = true;
+            _strLink = attributes.getValue(ATTRIBUTE_HREF);
+        }
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void endElement( String uri, String localName, String qName )
-        throws SAXException
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException
     {
-        if ( qName.equalsIgnoreCase( TAG_TITLE ) )
+        if (qName.equalsIgnoreCase(TAG_TITLE))
         {
             _bTitle = false;
         }
-        else if ( qName.equalsIgnoreCase( TAG_STRONG ) || qName.equalsIgnoreCase( TAG_BOLD ))
+        else if (qName.equalsIgnoreCase(TAG_STRONG) || qName.equalsIgnoreCase(TAG_BOLD))
         {
-           _sbDocument.append( "** " );
+            _sbDocument.append("** ");
         }
-        else if ( qName.equalsIgnoreCase( TAG_EM ) )
+        else if (qName.equalsIgnoreCase(TAG_EM))
         {
-           _sbDocument.append( "* " );
+            _sbDocument.append("* ");
         }
-        else if ( qName.equalsIgnoreCase( TAG_PRE ) )
+        else if (qName.equalsIgnoreCase(TAG_CODE))
         {
-           _sbDocument.append( "\n```\n" );
-           _bPRE = false;
+            _sbDocument.append("` ");
         }
-        else if ( qName.equalsIgnoreCase( TAG_UL ) )
+        else if (qName.equalsIgnoreCase(TAG_PARAGRAPH))
         {
-           _sbDocument.append( "\n" );
+            _sbDocument.append("\n");
         }
-        else if ( qName.equalsIgnoreCase( TAG_TR ) )
+        else if (qName.equalsIgnoreCase(TAG_PRE))
         {
-           _sbDocument.append( "|\n" );
-           if( _nTableRowCount == 1 )
-           {
-               for( int i = 0 ; i < _nTableColumnCount ; i++ )
-               {
-                   _sbDocument.append( "|-----------------" );
-               }
-               _sbDocument.append( "|\n" );
-           }
+            _sbDocument.append("\n```\n");
+            _bPRE = false;
+        }
+        else if (qName.equalsIgnoreCase(TAG_UL))
+        {
+            _sbDocument.append("\n");
+        }
+        else if (qName.equalsIgnoreCase(TAG_TR))
+        {
+            _sbDocument.append("|\n");
+            if (_nTableRowCount == 1)
+            {
+                for (int i = 0; i < _nTableColumnCount; i++)
+                {
+                    _sbDocument.append("|-----------------");
+                }
+                _sbDocument.append("|\n");
+            }
+        }
+        else if( qName.equalsIgnoreCase(TAG_ANCHOR))
+        {
+            _bAnchor = false;
         }
     }
 
@@ -182,22 +213,25 @@ public class XDoc2MarkdownHandler extends DefaultHandler
      * {@inheritDoc }
      */
     @Override
-    public void characters( char[] ch, int start, int length )
-        throws SAXException
+    public void characters(char[] ch, int start, int length)
+            throws SAXException
     {
-        if ( _bTitle )
+        if (_bTitle)
         {
-            _sbDocument.append( "\n#" ).append( new String( ch, start, length ).trim() ).append( "\n" );
+            _sbDocument.append("\n#").append(new String(ch, start, length).trim()).append("\n");
+        }
+        else if( _bAnchor )
+        {
+            _sbDocument.append(" [").append(new String(ch, start, length).trim()).append("](").append( _strLink.trim()).append(") ");
         }
         else
         {
-            String strText = new String( ch, start, length );
-            if( ! _bPRE )
+            String strText = new String(ch, start, length);
+            if (!_bPRE)
             {
                 strText = strText.trim().replaceAll("\\s+", " ");
             }
-            _sbDocument.append( strText );
+            _sbDocument.append(strText);
         }
     }
 }
-
