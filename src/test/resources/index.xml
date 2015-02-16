@@ -22,6 +22,8 @@
                     <li>List item 3</li>
                 </ul> 
             </p>
+            <img src="http://dev.lutece.paris.fr/images/banner_left.png" alt="Absolute image" />
+            <img src="images/banner_left.png" alt="Relative image" />
             <p>
                 <table>
                     <tr>

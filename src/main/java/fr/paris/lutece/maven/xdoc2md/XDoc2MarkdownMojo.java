@@ -33,71 +33,80 @@
  */
 package fr.paris.lutece.maven.xdoc2md;
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProject;
+
+import org.xml.sax.SAXException;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
+
 /**
  *
  * @author pierre
- * 
- * 
+ *
+ *
  * @goal readme
  * @phase process-sources
  */
-@Mojo( name = "readme")
+@Mojo( name = "readme" )
 public class XDoc2MarkdownMojo extends AbstractMojo
 {
- 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute(  ) throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Create or update file README.md from src/site/xdoc/index.xml");
-        
-        MavenProject project = (MavenProject) getPluginContext().get("project");
-        String strBaseDir = project.getBasedir().getAbsolutePath();
-        getLog().info( "Basedir :" + strBaseDir );
-        
+        getLog(  ).info( "Create or update file README.md from src/site/xdoc/index.xml" );
+
+        MavenProject project = (MavenProject) getPluginContext(  ).get( "project" );
+        String strBaseDir = project.getBasedir(  ).getAbsolutePath(  );
+        getLog(  ).info( "Basedir :" + strBaseDir );
+
         String strInput = strBaseDir + File.separator + "src/site/xdoc/index.xml";
         String strOutput = strBaseDir + File.separator + "README.md";
-        parse(strInput, strOutput);
+        transform( project.getArtifactId(  ), strInput, strOutput );
     }
 
-    private void parse(String strInput, String strOutput)
+    /**
+     * Transform an xDoc to MD file
+     *
+     * @param strArtifactId The artifact ID
+     * @param strInput The input file path
+     * @param strOutput The output file path
+     */
+    private void transform( String strArtifactId, String strInput, String strOutput )
     {
         try
         {
-            String strDocument = XDoc2MarkdownService.convert( new FileInputStream(strInput));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(strOutput));
-            writer.write(strDocument);
-            writer.close();
-        }
-        catch (ParserConfigurationException ex)
+            String strDocument = XDoc2MarkdownService.convert( strArtifactId, new FileInputStream( strInput ) );
+            BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) );
+            writer.write( strDocument );
+            writer.close(  );
+            getLog(  ).info( strDocument );
+        } 
+        catch ( ParserConfigurationException ex )
         {
-            getLog().error(ex.getMessage(), ex);
-        }
-        catch (SAXException ex)
+            getLog(  ).error( ex.getMessage(  ), ex );
+        } 
+        catch ( SAXException ex )
         {
-            getLog().error(ex.getMessage(), ex);
-        }
-        catch (FileNotFoundException ex)
+            getLog(  ).error( ex.getMessage(  ), ex );
+        } 
+        catch ( FileNotFoundException ex )
         {
-            getLog().error(ex.getMessage(), ex);
-        }
-        catch (IOException ex)
+            getLog(  ).error( ex.getMessage(  ), ex );
+        } 
+        catch ( IOException ex )
         {
-            getLog().error(ex.getMessage(), ex);
+            getLog(  ).error( ex.getMessage(  ), ex );
         }
-
     }
-
 }

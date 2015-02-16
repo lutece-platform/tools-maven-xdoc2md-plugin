@@ -33,13 +33,15 @@
  */
 package fr.paris.lutece.maven.xdoc2md;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * XDoc2MarkdownService
@@ -47,20 +49,22 @@ import org.xml.sax.SAXException;
 public class XDoc2MarkdownService
 {
     /**
-     * Convert an xDoc source into a Markdown document as a String 
+     * Convert an xDoc source into a Markdown document as a String
+     * @param strArtifactId The artifact id
      * @param input The source
      * @return The Markdown document as a String
      * @throws ParserConfigurationException if an error occurs
      * @throws SAXException if an error occurs
      * @throws IOException  if an error occurs
      */
-    public static String convert(InputStream input) throws ParserConfigurationException, SAXException, IOException
+    public static String convert( String strArtifactId, InputStream input )
+                          throws ParserConfigurationException, SAXException, IOException
     {
-        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        SAXParser saxParser = saxParserFactory.newSAXParser();
-        XDoc2MarkdownHandler handler = new XDoc2MarkdownHandler();
-        saxParser.parse(new InputSource( input ), handler);
-        return handler.getDocument();
-    }
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(  );
+        SAXParser saxParser = saxParserFactory.newSAXParser(  );
+        XDoc2MarkdownHandler handler = new XDoc2MarkdownHandler( strArtifactId );
+        saxParser.parse( new InputSource( input ), handler );
 
+        return handler.getDocument(  );
+    }
 }

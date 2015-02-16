@@ -5,6 +5,8 @@
 
 This Maven plugin can convert xDoc files (used by Maven Site) to [Markdown](http://daringfireball.net/projects/markdown/) files (Wiki format used by [GitHub](https://guides.github.com/features/mastering-markdown/) ).
 
+![Markdown Logo](https://github.com/dcurtis/markdown-mark/blob/master/png/208x128.png?raw=true)
+
 The goal **readme** can create the `README.md` file from the `src/site/xdoc/index.xml` .
 
 ##Usage

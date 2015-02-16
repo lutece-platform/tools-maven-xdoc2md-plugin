@@ -14,6 +14,9 @@
                     files (Wiki format used by <a href="https://guides.github.com/features/mastering-markdown/">GitHub</a>).
                 </p>
                 <p>
+                    <img src="https://github.com/dcurtis/markdown-mark/blob/master/png/208x128.png?raw=true" alt="Markdown Logo" />
+                </p>
+                <p>
                     The goal <strong>readme</strong> can create the <code>README.md</code> file
                     from the <code>src/site/xdoc/index.xml</code>.  
                 </p>

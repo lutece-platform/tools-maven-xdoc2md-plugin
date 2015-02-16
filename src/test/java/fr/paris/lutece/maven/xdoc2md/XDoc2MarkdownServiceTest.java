@@ -33,26 +33,27 @@
  */
 package fr.paris.lutece.maven.xdoc2md;
 
-import java.io.InputStream;
 import junit.framework.TestCase;
+
+import java.io.InputStream;
 
 /**
  *
  * @author pierre
  */
-public class XDoc2MarkdownServiceTest extends TestCase
+public class XDoc2MarkdownServiceTest
+    extends TestCase
 {
-    
-
     /**
      * Test of convert method, of class XDoc2MarkdownService.
+     * @throws java.lang.Exception
      */
-    public void testConvert() throws Exception
+    public void testConvert(  ) throws Exception
     {
-        System.out.println("convert");
-        InputStream input = getClass().getResourceAsStream("/index.xml");
-        String strDocument = XDoc2MarkdownService.convert(input);
+        System.out.println( "convert" );
+
+        InputStream input = getClass(  ).getResourceAsStream( "/index.xml" );
+        String strDocument = XDoc2MarkdownService.convert( "artifactId" , input );
         System.out.println( strDocument );
     }
-    
 }
