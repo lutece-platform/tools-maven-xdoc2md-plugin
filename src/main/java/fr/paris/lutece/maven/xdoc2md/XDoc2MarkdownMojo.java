@@ -54,9 +54,6 @@ import javax.xml.parsers.ParserConfigurationException;
  *
  * @author pierre
  *
- *
- * @goal readme
- * @phase process-sources
  */
 @Mojo( name = "readme" )
 public class XDoc2MarkdownMojo extends AbstractMojo
