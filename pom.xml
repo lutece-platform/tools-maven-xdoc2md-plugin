@@ -53,15 +53,30 @@
         </plugins>
     </build>
     
+    <properties>
+        <jiraProjectName>XDOCTOMD</jiraProjectName>
+        <jiraComponentId>12864</jiraComponentId>
+    </properties>
+    
     <scm>
         <connection>scm:git:https://github.com/lutece-platform/tools-maven-xdoc2md-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/tools-maven-xdoc2md-plugin.git</developerConnection>
         <url>https://github.com/lutece-platform/tools-maven-xdoc2md-plugin.git</url>
     </scm>
 
-    <properties>
-        <jiraProjectName>XDOCTOMD</jiraProjectName>
-        <jiraComponentId>12864</jiraComponentId>
-    </properties>
+    <distributionManagement>
+        <repository>
+            <id>lutece_releases_repository</id>
+            <url>http://dev.lutece.paris.fr/nexus/content/repositories/lutece_releases_repository</url>
+        </repository>
+		
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>lutece_snapshots_repository</id>
+            <url>http://dev.lutece.paris.fr/nexus/content/repositories/lutece_snapshots_repository</url>
+        </snapshotRepository>
+        
+    </distributionManagement>
+
 	
 </project>
