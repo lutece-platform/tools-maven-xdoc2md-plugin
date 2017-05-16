@@ -10,6 +10,11 @@
         Convert xDoc index.xml to README.md.
     </description>
 
+    <!-- Useful for version:display-plugin-updates -->
+    <prerequisites>
+        <maven>3.0.5</maven>
+    </prerequisites>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -36,7 +41,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.3</version>
                 <configuration>
                     <providerImplementations>
                         <git>jgit</git>
@@ -53,7 +58,7 @@
 
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
