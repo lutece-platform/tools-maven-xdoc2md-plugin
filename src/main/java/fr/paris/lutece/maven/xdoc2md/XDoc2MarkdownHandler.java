@@ -108,11 +108,11 @@ public class XDoc2MarkdownHandler extends DefaultHandler
         } 
         else if ( qName.equalsIgnoreCase( TAG_SECTION ) )
         {
-            _sbDocument.append( "\n#" ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
+            _sbDocument.append( "\n# " ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_SUBSECTION ) )
         {
-            _sbDocument.append( "\n##" ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
+            _sbDocument.append( "\n## " ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_STRONG ) || qName.equalsIgnoreCase( TAG_BOLD ) )
         {
