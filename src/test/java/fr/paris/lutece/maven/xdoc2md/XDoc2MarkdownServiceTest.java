@@ -53,7 +53,7 @@ public class XDoc2MarkdownServiceTest
         System.out.println( "convert" );
 
         InputStream input = getClass(  ).getResourceAsStream( "/index.xml" );
-        String strDocument = XDoc2MarkdownService.convert( "artifactId" , input );
+        String strDocument = XDoc2MarkdownService.convert( "artifactId" , "lutece-cms-plugin-document.git" , input );
         System.out.println( strDocument );
     }
 }

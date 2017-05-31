@@ -51,10 +51,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
+ * XDoc2MarkdownMojo
  *
- * @author pierre
- *
- * @goal readme
  */
 @Mojo( name = "readme" )
 public class XDoc2MarkdownMojo extends AbstractMojo
@@ -70,21 +68,23 @@ public class XDoc2MarkdownMojo extends AbstractMojo
 
         String strInput = strBaseDir + File.separator + "src/site/xdoc/index.xml";
         String strOutput = strBaseDir + File.separator + "README.md";
-        transform( project.getArtifactId(  ), strInput, strOutput );
+        transform( project.getArtifactId(  ), project.getScm().getUrl() , strInput, strOutput );
     }
 
     /**
      * Transform an xDoc to MD file
      *
      * @param strArtifactId The artifact ID
+     * @param strScmUrl The SCM Url
      * @param strInput The input file path
      * @param strOutput The output file path
      */
-    private void transform( String strArtifactId, String strInput, String strOutput )
+    private void transform( String strArtifactId, String strScmUrl, String strInput, String strOutput)
     {
         try
         {
-            String strDocument = XDoc2MarkdownService.convert( strArtifactId, new FileInputStream( strInput ) );
+            String strRepository = getRepositoryName( strScmUrl );
+            String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository , new FileInputStream( strInput ) );
             BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) );
             writer.write( strDocument );
             writer.close(  );
@@ -106,5 +106,17 @@ public class XDoc2MarkdownMojo extends AbstractMojo
         {
             getLog(  ).error( ex.getMessage(  ), ex );
         }
+    }
+    
+    /**
+     * Extracts the repository name from the repository URL
+     * @param strScmUrl the repository URL
+     * @return the repository name
+     */
+    private String getRepositoryName( String strScmUrl )
+    {
+        int nPos = strScmUrl.lastIndexOf( '/' );
+        return strScmUrl.substring( nPos + 1 );
+        
     }
 }

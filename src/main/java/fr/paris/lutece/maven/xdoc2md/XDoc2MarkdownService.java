@@ -51,18 +51,19 @@ public class XDoc2MarkdownService
     /**
      * Convert an xDoc source into a Markdown document as a String
      * @param strArtifactId The artifact id
+     * @param strRepository The repository name
      * @param input The source
      * @return The Markdown document as a String
      * @throws ParserConfigurationException if an error occurs
      * @throws SAXException if an error occurs
      * @throws IOException  if an error occurs
      */
-    public static String convert( String strArtifactId, InputStream input )
+    public static String convert( String strArtifactId, String strRepository , InputStream input )
                           throws ParserConfigurationException, SAXException, IOException
     {
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(  );
         SAXParser saxParser = saxParserFactory.newSAXParser(  );
-        XDoc2MarkdownHandler handler = new XDoc2MarkdownHandler( strArtifactId );
+        XDoc2MarkdownHandler handler = new XDoc2MarkdownHandler( strArtifactId , strRepository );
         saxParser.parse( new InputSource( input ), handler );
 
         return handler.getDocument(  );
