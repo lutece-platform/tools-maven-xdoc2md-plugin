@@ -53,6 +53,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * XDoc2MarkdownMojo
  *
+ * @goal readme
  */
 @Mojo( name = "readme" )
 public class XDoc2MarkdownMojo extends AbstractMojo
