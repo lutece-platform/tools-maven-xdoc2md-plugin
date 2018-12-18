@@ -1,4 +1,4 @@
-!["build status"](http://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=tools-maven-xdoc2md-plugin-deploy)
+!["build status"]("http://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=tools-maven-xdoc2md-plugin-deploy")
 # xDoc2md Maven Plugin
 
 ## Introduction
