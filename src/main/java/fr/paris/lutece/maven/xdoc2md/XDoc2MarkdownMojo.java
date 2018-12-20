@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,32 +44,84 @@ import org.xml.sax.SAXException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * XDoc2MarkdownMojo
+ * Maven Goal to convert xDoc documentation into README file in markdown format
  *
- * @goal readme
  */
-@Mojo( name = "readme" )
+@Mojo(name = "readme")
 public class XDoc2MarkdownMojo extends AbstractMojo
 {
+
+    private static final String XDOC_PATH = "/src/site";
+    private static final String XDOC_DIR = "/xdoc/";
+    private static final String XDOC_FILE = "index.xml";
+
+    /**
+     * Execute the goal 'readme' on the current project
+     * @throws MojoExecutionException if an error occurs
+     * @throws MojoFailureException if an error occurs
+     */
     @Override
-    public void execute(  ) throws MojoExecutionException, MojoFailureException
+    public void execute() throws MojoExecutionException, MojoFailureException
     {
-        getLog(  ).info( "Create or update file README.md from src/site/xdoc/index.xml" );
+        getLog().info( "========================================================================" );
+        getLog().info( "=    xDoc2MD : Create Markdown README files from xDoc documentation    =" );
+        getLog().info( "========================================================================" );
+        getLog().info( "------------------------------------------------------------------------" );
+        getLog().info( "Create or update the README.md file" );
+        getLog().info( "------------------------------------------------------------------------" );
 
-        MavenProject project = (MavenProject) getPluginContext(  ).get( "project" );
-        String strBaseDir = project.getBasedir(  ).getAbsolutePath(  );
-        getLog(  ).info( "Basedir :" + strBaseDir );
+        MavenProject project = (MavenProject) getPluginContext().get( "project" );
+        String strBaseDir = project.getBasedir().getAbsolutePath();
+        getLog().info( "Basedir :" + strBaseDir );
 
-        String strInput = strBaseDir + File.separator + "src/site/xdoc/index.xml";
+        String strInput = strBaseDir + File.separator + XDOC_PATH + File.separator + XDOC_DIR + XDOC_FILE;
         String strOutput = strBaseDir + File.separator + "README.md";
-        transform( project.getArtifactId(  ), project.getScm().getUrl() , strInput, strOutput );
+        transform( project.getArtifactId(), project.getScm().getUrl(), strInput, strOutput );
+
+        // Localized documentation
+        for( String strLocale : getLocales( strBaseDir + XDOC_PATH ) )
+        {
+            getLog().info( "------------------------------------------------------------------------" );
+            getLog().info( "Create or update documentation for locale: " + strLocale );
+            getLog().info( "------------------------------------------------------------------------" );
+            getLog().info( "Localized documentation directory: " + strBaseDir + XDOC_PATH + File.separator + strLocale );
+            strInput = strBaseDir + XDOC_PATH + File.separator + strLocale + XDOC_DIR + XDOC_FILE;
+            strOutput = strBaseDir + File.separator + "README." + strLocale + ".md";
+            transform( project.getArtifactId(), project.getScm().getUrl(), strInput, strOutput );
+        }
+    }
+
+    /**
+     * Search for localized documentation directories from a root directory
+     * @param strDocumentationRootDir The documentation root directory
+     * @return The locale list
+     */
+    List<String> getLocales( String strDocumentationRootDir )
+    {
+        try
+        {
+            return Files.list( Paths.get( strDocumentationRootDir ) )
+                    .filter( path -> path.toFile().isDirectory() && path.toFile().getName().length() == 2 )
+                    .map( path -> path.toFile().getName() )
+                    .collect( Collectors.toList() );
+        }
+        catch( IOException ex )
+        {
+            getLog().error( ex.getMessage(), ex );
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -80,37 +132,26 @@ public class XDoc2MarkdownMojo extends AbstractMojo
      * @param strInput The input file path
      * @param strOutput The output file path
      */
-    private void transform( String strArtifactId, String strScmUrl, String strInput, String strOutput)
+    private void transform( String strArtifactId, String strScmUrl, String strInput, String strOutput )
     {
         try
         {
             String strRepository = getRepositoryName( strScmUrl );
-            String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository , new FileInputStream( strInput ) );
+            String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository, new FileInputStream( strInput ) );
             BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) );
             writer.write( strDocument );
-            writer.close(  );
-            getLog(  ).info( strDocument );
-        } 
-        catch ( ParserConfigurationException ex )
+            writer.close();
+            getLog().info( strDocument );
+        }
+        catch( ParserConfigurationException | SAXException | IOException ex )
         {
-            getLog(  ).error( ex.getMessage(  ), ex );
-        } 
-        catch ( SAXException ex )
-        {
-            getLog(  ).error( ex.getMessage(  ), ex );
-        } 
-        catch ( FileNotFoundException ex )
-        {
-            getLog(  ).error( ex.getMessage(  ), ex );
-        } 
-        catch ( IOException ex )
-        {
-            getLog(  ).error( ex.getMessage(  ), ex );
+            getLog().error( ex.getMessage(), ex );
         }
     }
-    
+
     /**
      * Extracts the repository name from the repository URL
+     *
      * @param strScmUrl the repository URL
      * @return the repository name
      */
@@ -118,6 +159,6 @@ public class XDoc2MarkdownMojo extends AbstractMojo
     {
         int nPos = strScmUrl.lastIndexOf( '/' );
         return strScmUrl.substring( nPos + 1 );
-        
+
     }
 }
