@@ -76,7 +76,12 @@ public class XDoc2MarkdownMojo extends AbstractMojo
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         getLog().info( "========================================================================" );
-        getLog().info( "=    xDoc2MD : Create Markdown README files from xDoc documentation    =" );
+        getLog().info( "         ____             ____  __  __ ____");  
+        getLog().info( "   __  _|  _ \\  ___   ___|___ \\|  \\/  |  _ \\ ");
+        getLog().info( "   \\ \\/ / | | |/ _ \\ / __| __) | |\\/| | | | |" );
+        getLog().info( "    >  <| |_| | (_) | (__ / __/| |  | | |_| |" );
+        getLog().info( "   /_/\\_\\____/ \\___/ \\___|_____|_|  |_|____/" );
+        getLog().info( "   Create Markdown README files from xDoc documentation" );
         getLog().info( "========================================================================" );
         getLog().info( "------------------------------------------------------------------------" );
         getLog().info( "Create or update the README.md file" );
