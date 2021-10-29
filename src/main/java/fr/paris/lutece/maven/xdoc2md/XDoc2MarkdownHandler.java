@@ -70,6 +70,7 @@ public class XDoc2MarkdownHandler extends DefaultHandler
     private static final String ATTRIBUTE_HREF = "href";
     private static final String ATTRIBUTE_SRC = "src";
     private static final String ATTRIBUTE_ALT = "alt";
+    private static final String ATTRIBUTE_LANGUAGE = "language";
     private static final String URL_XDOC = "https://dev.lutece.paris.fr/plugins/";
     private static final String URL_SONAR_SERVER = "https://dev.lutece.paris.fr/sonar";
     private static final String BADGE_FORMAT = "\n[![{0}]({1}/api/project_badges/measure?project=fr.paris.lutece.plugins%3A{3}&metric={2})]" +
@@ -154,7 +155,12 @@ public class XDoc2MarkdownHandler extends DefaultHandler
         } 
         else if ( qName.equalsIgnoreCase( TAG_PRE ) )
         {
-            _sbDocument.append( "\n```\n" );
+            _sbDocument.append( "\n```" );
+            if ( attributes.getValue( ATTRIBUTE_LANGUAGE ) != null )
+            {
+                _sbDocument.append( attributes.getValue( ATTRIBUTE_LANGUAGE ) );
+            }
+            _sbDocument.append( "\n" );
             _bPRE = true;
         } 
         else if ( qName.equalsIgnoreCase( TAG_LI ) )
