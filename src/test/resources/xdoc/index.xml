@@ -55,9 +55,34 @@
                 </p>
                 <p>
                     <div class="source">
+                        <pre language="java">
+public void fooJava( String name ) {
+    System.out.println( name );
+}
+                        </pre>
+                        <pre language="html">
+<![CDATA[
+<table>
+    <tr>
+        <th>Column Title 1</th>
+    </tr>
+    <tr>
+        <td>Row 1 - Column 1</td>
+    </tr>
+    <tr>
+        <td>Row 2 - Column 1</td>
+    </tr>
+</table>
+]]>
+                        </pre>
+                        <pre language="properties">
+# Default cache configuration
+lutece.cache.default.maxElementsInMemory=1000
+lutece.cache.default.eternal=false
+                        </pre>
                         <pre>
 public void foo( String name ) {
-    System.out.println( name );
+System.out.println( name );
 }
                         </pre>
                     </div>
