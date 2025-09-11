@@ -104,7 +104,7 @@
     <distributionManagement>
         <repository>
             <id>lutece_releases_repository</id>
-            <url>http://dev.lutece.paris.fr/nexus/content/repositories/lutece_releases_repository</url>
+            <url>https://dev.lutece.paris.fr/nexus/content/repositories/lutece_releases_repository</url>
         </repository>
 		
         <snapshotRepository>
