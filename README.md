@@ -7,20 +7,18 @@
 
 ## Introduction
 
-This Maven plugin can convert xDoc files (used by Maven Site) to [Markdown](http://daringfireball.net/projects/markdown/) files (Wiki format used by [GitHub](https://guides.github.com/features/mastering-markdown/) ).
+This Maven plugin can convert xDoc files (used by Maven Site) to [Markdown](http://daringfireball.net/projects/markdown/) files (Wiki format used by [GitHub](https://guides.github.com/features/mastering-markdown/)).
 
 ![Markdown Logo](https://github.com/dcurtis/markdown-mark/blob/master/png/208x128.png?raw=true)
 
-The goal **readme** can create the `README.md` file from the `src/site/xdoc/index.xml` .
+The goal **readme** can create the `README.md` file from the `src/site/xdoc/index.xml`.
 
 ## Usage
 
 Download this project and install the plugin:
 
 ```
-
  mvn install
-                    
 ```
 
 Then go into your project's directory where you want to create or update the `README.md` file.
@@ -28,9 +26,7 @@ Then go into your project's directory where you want to create or update the `RE
 Type the following command to generate the README.md :
 
 ```shell
-
  mvn fr.paris.lutece.tools:xdoc2md-maven-plugin:readme
-                    
 ```
 
 ## Syntax highlighting
@@ -40,8 +36,6 @@ Add a `language` attribute to a `pre` element to get the generated code block hi
 The value is copied as is into the Markdown fenced code block, so any language supported by GitHub can be used.
 
 ```xml
-
-
 <div class="source">
     <pre language="java">
 public void foo( String name ) {
@@ -49,8 +43,6 @@ public void foo( String name ) {
 }
     </pre>
 </div>
-
-                    
 ```
 
 A `pre` element without this attribute is converted into a code block without any language, exactly as before.
