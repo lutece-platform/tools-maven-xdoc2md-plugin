@@ -104,6 +104,28 @@ public class XDoc2MarkdownMojoTest
     }
 
     /**
+     * Test that the documentation is written in UTF-8, whatever the default charset
+     * of the platform is. The output used to be written with the platform charset,
+     * which mangled the accented characters of the French documentation.
+     * @throws java.lang.Exception
+     */
+    public void testTransformWritesUtf8(  ) throws Exception
+    {
+        Path directory = Files.createTempDirectory( "xdoc2md" );
+        Path input = directory.resolve( "index.xml" );
+        Files.write( input, ( "<?xml version=\"1.0\" encoding=\"UTF-8\"?><document><body>" +
+            "<section name=\"Créé à Paris\"><p>Fonctionnalité déjà présente</p></section>" +
+            "</body></document>" ).getBytes( StandardCharsets.UTF_8 ) );
+
+        File output = new File( directory.toFile(  ), "README.md" );
+        new XDoc2MarkdownMojo(  ).transform( ARTIFACT_ID, SCM_URL, input.toString(  ), output.getAbsolutePath(  ) );
+
+        String strDocument = new String( Files.readAllBytes( output.toPath(  ) ), StandardCharsets.UTF_8 );
+        assertTrue( strDocument.contains( "Créé à Paris" ) );
+        assertTrue( strDocument.contains( "Fonctionnalité déjà présente" ) );
+    }
+
+    /**
      * Test that a conversion error fails the build instead of leaving it green
      */
     public void testTransformFailsOnMissingInputFile(  )

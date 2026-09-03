@@ -41,12 +41,12 @@ import org.apache.maven.project.MavenProject;
 
 import org.xml.sax.SAXException;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -189,7 +189,7 @@ public class XDoc2MarkdownMojo extends AbstractMojo
             String strRepository = getRepositoryName( strScmUrl );
             String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository, input );
 
-            try ( BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) ) )
+            try ( Writer writer = Files.newBufferedWriter( Paths.get( strOutput ), StandardCharsets.UTF_8 ) )
             {
                 writer.write( strDocument );
             }
