@@ -46,11 +46,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -65,7 +70,9 @@ public class XDoc2MarkdownMojo extends AbstractMojo
 
     private static final String XDOC_PATH = "/src/site";
     private static final String XDOC_DIR = "/xdoc/";
+    private static final String XDOC_DIR_NAME = "xdoc";
     private static final String XDOC_FILE = "index.xml";
+    private static final String README_FILE = "README.md";
 
     /**
      * Execute the goal 'readme' on the current project
@@ -91,9 +98,11 @@ public class XDoc2MarkdownMojo extends AbstractMojo
         String strBaseDir = project.getBasedir().getAbsolutePath();
         getLog().info( "Basedir :" + strBaseDir );
 
+        String strScmUrl = getScmUrl( project );
+
         String strInput = strBaseDir + File.separator + XDOC_PATH + File.separator + XDOC_DIR + XDOC_FILE;
-        String strOutput = strBaseDir + File.separator + "README.md";
-        transform( project.getArtifactId(), project.getScm().getUrl(), strInput, strOutput );
+        String strOutput = strBaseDir + File.separator + README_FILE;
+        transform( project.getArtifactId(), strScmUrl, strInput, strOutput );
 
         // Localized documentation
         for( String strLocale : getLocales( strBaseDir + XDOC_PATH ) )
@@ -104,8 +113,29 @@ public class XDoc2MarkdownMojo extends AbstractMojo
             getLog().info( "Localized documentation directory: " + strBaseDir + XDOC_PATH + File.separator + strLocale );
             strInput = strBaseDir + XDOC_PATH + File.separator + strLocale + XDOC_DIR + XDOC_FILE;
             strOutput = strBaseDir + File.separator + "README." + strLocale + ".md";
-            transform( project.getArtifactId(), project.getScm().getUrl(), strInput, strOutput );
+            transform( project.getArtifactId(), strScmUrl, strInput, strOutput );
         }
+    }
+
+    /**
+     * Gets the SCM url of the project. The url is required to build the documentation
+     * links and the build status badge, so a missing declaration is an error.
+     * Package visibility for unit testing.
+     * @param project The Maven project
+     * @return The SCM url
+     * @throws MojoExecutionException if the POM declares no SCM url
+     */
+    String getScmUrl( MavenProject project ) throws MojoExecutionException
+    {
+        String strScmUrl = ( project.getScm() != null ) ? project.getScm().getUrl() : null;
+
+        if ( strScmUrl == null || strScmUrl.trim().isEmpty() )
+        {
+            throw new MojoExecutionException( "No <scm><url> declared in the POM of " + project.getArtifactId()
+                    + ". This url is required to build the documentation links and the build status badge." );
+        }
+
+        return strScmUrl;
     }
 
     /**
@@ -115,11 +145,14 @@ public class XDoc2MarkdownMojo extends AbstractMojo
      */
     List<String> getLocales( String strDocumentationRootDir )
     {
-        try
+        try ( Stream<Path> paths = Files.list( Paths.get( strDocumentationRootDir ) ) )
         {
-            return Files.list( Paths.get( strDocumentationRootDir ) )
-                    .filter( path -> path.toFile().isDirectory() && path.toFile().getName().length() == 2 )
-                    .map( path -> path.toFile().getName() )
+            return paths.filter( Files::isDirectory )
+                    .map( path -> path.getFileName().toString() )
+                    .filter( XDoc2MarkdownMojo::isLanguage )
+                    .filter( strLocale -> Files.isReadable(
+                            Paths.get( strDocumentationRootDir, strLocale, XDOC_DIR_NAME, XDOC_FILE ) ) )
+                    .sorted()
                     .collect( Collectors.toList() );
         }
         catch( IOException ex )
@@ -130,27 +163,43 @@ public class XDoc2MarkdownMojo extends AbstractMojo
     }
 
     /**
+     * Checks that a directory name is an ISO 639 language code
+     * @param strName The directory name
+     * @return true if the name is a language code, false otherwise
+     */
+    private static boolean isLanguage( String strName )
+    {
+        return Arrays.asList( Locale.getISOLanguages() ).contains( strName );
+    }
+
+    /**
      * Transform an xDoc to MD file
      *
      * @param strArtifactId The artifact ID
      * @param strScmUrl The SCM Url
      * @param strInput The input file path
      * @param strOutput The output file path
+     * @throws MojoExecutionException if the file can not be read, converted or written
      */
-    private void transform( String strArtifactId, String strScmUrl, String strInput, String strOutput )
+    void transform( String strArtifactId, String strScmUrl, String strInput, String strOutput )
+            throws MojoExecutionException
     {
-        try
+        try ( InputStream input = new FileInputStream( strInput ) )
         {
             String strRepository = getRepositoryName( strScmUrl );
-            String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository, new FileInputStream( strInput ) );
-            BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) );
-            writer.write( strDocument );
-            writer.close();
+            String strDocument = XDoc2MarkdownService.convert( strArtifactId, strRepository, input );
+
+            try ( BufferedWriter writer = new BufferedWriter( new FileWriter( strOutput ) ) )
+            {
+                writer.write( strDocument );
+            }
+
             getLog().info( strDocument );
         }
         catch( ParserConfigurationException | SAXException | IOException ex )
         {
-            getLog().error( ex.getMessage(), ex );
+            throw new MojoExecutionException( "Unable to generate " + strOutput + " from " + strInput
+                    + " : " + ex.getMessage(), ex );
         }
     }
 

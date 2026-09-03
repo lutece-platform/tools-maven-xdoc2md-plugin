@@ -38,10 +38,34 @@
                     Type the following command to generate the README.md :
                 </p>
                 <div class="source">
-                    <pre>
+                    <pre language="shell">
  mvn fr.paris.lutece.tools:xdoc2md-maven-plugin:readme
                     </pre>
                 </div>
+            </subsection>
+            <subsection name="Syntax highlighting">
+                <p>
+                    Add a <code>language</code> attribute to a <code>pre</code> element to get the generated code block highlighted.
+                </p>
+                <p>
+                    The value is copied as is into the Markdown fenced code block, so any language supported by GitHub can be used.
+                </p>
+                <div class="source">
+                    <pre language="xml">
+<![CDATA[
+<div class="source">
+    <pre language="java">
+public void foo( String name ) {
+    System.out.println( name );
+}
+    </pre>
+</div>
+]]>
+                    </pre>
+                </div>
+                <p>
+                    A <code>pre</code> element without this attribute is converted into a code block without any language, exactly as before.
+                </p>
             </subsection>
        </section>
 		

@@ -55,5 +55,28 @@ public class XDoc2MarkdownServiceTest
         InputStream input = XDoc2MarkdownServiceTest.class.getResourceAsStream( "/xdoc/index.xml" );
         String strDocument = XDoc2MarkdownService.convert( "artifactId" , "lutece-cms-plugin-document.git" , input );
         System.out.println( strDocument );
+
+        assertTrue( strDocument.contains( "# Section 1 title" ) );
+        assertTrue( strDocument.contains( "## Subsection 2-1 title" ) );
+
+        // Highlighted code blocks
+        assertTrue( strDocument.contains( "```java" ) );
+        assertTrue( strDocument.contains( "```html" ) );
+        assertTrue( strDocument.contains( "```properties" ) );
+
+        // A code block without language attribute stays a plain code block
+        assertTrue( strDocument.contains( "\n```\n" ) );
+
+        // The indentation of every code block is preserved
+        assertTrue( strDocument.contains( "public void fooJava( String name ) {\n    System.out.println( name );" ) );
+        assertTrue( strDocument.contains( "public void foo( String name ) {\n    System.out.println( name );" ) );
+
+        // Links, images and tables
+        assertTrue( strDocument.contains( "[Lutece Link](http://dev.lutece.paris.fr)" ) );
+        assertTrue( strDocument.contains( "![Relative image](https://dev.lutece.paris.fr/plugins/artifactId/images/banner_left.png)" ) );
+        assertTrue( strDocument.contains( "| Column Title 1| Column Title 2|" ) );
+
+        // The build status badge is built from the repository name
+        assertTrue( strDocument.contains( "job=cms-plugin-document-deploy" ) );
     }
 }

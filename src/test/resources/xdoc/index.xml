@@ -82,7 +82,7 @@ lutece.cache.default.eternal=false
                         </pre>
                         <pre>
 public void foo( String name ) {
-System.out.println( name );
+    System.out.println( name );
 }
                         </pre>
                     </div>
