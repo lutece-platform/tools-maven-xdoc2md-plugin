@@ -138,6 +138,17 @@ public class XDoc2MarkdownHandlerTest
     }
 
     /**
+     * Test that a link is separated from the previous text by a single space
+     * @throws java.lang.Exception
+     */
+    public void testAnchorSpacing(  ) throws Exception
+    {
+        String strDocument = convert( "converted to \n            <a href=\"http://a.b\">Markdown</a> files" );
+
+        assertTrue( strDocument.contains( "converted to [Markdown](http://a.b) files" ) );
+    }
+
+    /**
      * Test an anchor holding a nested tag
      * @throws java.lang.Exception
      */
@@ -171,6 +182,125 @@ public class XDoc2MarkdownHandlerTest
 
         assertTrue( strDocument.contains( "Anchor text" ) );
         assertFalse( strDocument.contains( "[Anchor text](" ) );
+    }
+
+    /**
+     * Test a long text, which SAX splits into several events on its parser buffer
+     * boundary. Trimming each event glued the last word of an event and the first
+     * word of the next one.
+     * @throws java.lang.Exception
+     */
+    public void testLongTextIsNotGlued(  ) throws Exception
+    {
+        StringBuilder sbContent = new StringBuilder(  );
+        StringBuilder sbExpected = new StringBuilder(  );
+
+        for ( int i = 0; i < 400; i++ )
+        {
+            sbContent.append( "word" ).append( i ).append( "\n                " );
+            sbExpected.append( "word" ).append( i ).append( " " );
+        }
+
+        String strDocument = convert( sbContent.toString(  ) );
+
+        assertTrue( strDocument.contains( sbExpected.toString(  ).trim(  ) ) );
+    }
+
+    /**
+     * Test that a paragraph does not end with a space, two trailing spaces are a
+     * hard line break in Markdown
+     * @throws java.lang.Exception
+     */
+    public void testParagraphHasNoTrailingSpace(  ) throws Exception
+    {
+        assertFalse( convert( "Lorem ipsum \n            " ).contains( " \n" ) );
+    }
+
+    /**
+     * Test that the line breaks of a paragraph are collapsed into single spaces
+     * @throws java.lang.Exception
+     */
+    public void testMultipleLinesAreCollapsed(  ) throws Exception
+    {
+        String strDocument = convert( "Ut wisi enim ad minim veniam, \n            quis nostrud exerci tation" );
+
+        assertTrue( strDocument.contains( "veniam, quis nostrud" ) );
+    }
+
+    /**
+     * Test a text split by an entity
+     * @throws java.lang.Exception
+     */
+    public void testTextSplitByAnEntity(  ) throws Exception
+    {
+        String strDocument = convert( "Docs &amp; Guides" );
+
+        assertTrue( strDocument.contains( "Docs & Guides" ) );
+        assertFalse( strDocument.contains( "Docs&" ) );
+    }
+
+    /**
+     * Test a text split by an inline tag
+     * @throws java.lang.Exception
+     */
+    public void testTextSplitByAnInlineTag(  ) throws Exception
+    {
+        String strDocument = convert( "the <code>readme</code> goal" );
+
+        assertTrue( strDocument.contains( "the `readme` goal" ) );
+    }
+
+    /**
+     * Test that the markup sticks to the text it wraps, Markdown does not
+     * emphasize a text surrounded by spaces
+     * @throws java.lang.Exception
+     */
+    public void testMarkupHasNoInnerSpace(  ) throws Exception
+    {
+        String strDocument = convert( "before <strong>  bold text \n            </strong> after" );
+
+        assertTrue( strDocument.contains( "before **bold text** after" ) );
+    }
+
+    /**
+     * Test that a paragraph is not indented, Markdown renders an indented line
+     * as a code block
+     * @throws java.lang.Exception
+     */
+    public void testParagraphIsNotIndented(  ) throws Exception
+    {
+        String strXDoc = "<document><body><section name=\"Section\">\n    <p>\n        Lorem ipsum\n    </p>\n" +
+            "</section></body></document>";
+        String strDocument = XDoc2MarkdownService.convert( ARTIFACT_ID, REPOSITORY,
+            new ByteArrayInputStream( strXDoc.getBytes( StandardCharsets.UTF_8 ) ) );
+
+        assertTrue( strDocument.contains( "\nLorem ipsum" ) );
+        assertFalse( strDocument.contains( "\n    Lorem ipsum" ) );
+    }
+
+    /**
+     * Test that the table cells are not altered
+     * @throws java.lang.Exception
+     */
+    public void testTableCells(  ) throws Exception
+    {
+        String strDocument = convert( "<table><tr><th>Column Title 1</th><th>Column Title 2</th></tr>" +
+            "<tr><td>Row 1 - Column 1</td><td>Row 1 - Column 2</td></tr></table>" );
+
+        assertTrue( strDocument.contains( "| Column Title 1| Column Title 2|" ) );
+        assertTrue( strDocument.contains( "| Row 1 - Column 1| Row 1 - Column 2|" ) );
+    }
+
+    /**
+     * Test that a list item is not altered
+     * @throws java.lang.Exception
+     */
+    public void testListItems(  ) throws Exception
+    {
+        String strDocument = convert( "<ul>\n    <li>List item 1</li>\n    <li>List item 2</li>\n</ul>" );
+
+        assertTrue( strDocument.contains( "\n* List item 1" ) );
+        assertTrue( strDocument.contains( "\n* List item 2" ) );
     }
 
     /**
