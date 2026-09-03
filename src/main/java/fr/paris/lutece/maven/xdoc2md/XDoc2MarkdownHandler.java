@@ -96,6 +96,7 @@ public class XDoc2MarkdownHandler extends DefaultHandler
     private String _strLink;
     private boolean _bAnchor;
     private StringBuilder _sbAnchorText;
+    private StringBuilder _sbPreText;
     private boolean _bMarkupOpened;
     private String _strArtifactId;
 
@@ -139,11 +140,13 @@ public class XDoc2MarkdownHandler extends DefaultHandler
         } 
         else if ( qName.equalsIgnoreCase( TAG_SECTION ) )
         {
-            _sbDocument.append( "\n# " ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
+            appendBlock( "\n# " );
+            _sbDocument.append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_SUBSECTION ) )
         {
-            _sbDocument.append( "\n## " ).append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
+            appendBlock( "\n## " );
+            _sbDocument.append( attributes.getValue( ATTRIBUTE_NAME ) ).append( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_STRONG ) || qName.equalsIgnoreCase( TAG_BOLD ) )
         {
@@ -159,12 +162,12 @@ public class XDoc2MarkdownHandler extends DefaultHandler
         } 
         else if ( qName.equalsIgnoreCase( TAG_PARAGRAPH ) )
         {
-            _sbDocument.append( "\n" );
+            appendBlock( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_PRE ) )
         {
             String strLanguage = attributes.getValue( ATTRIBUTE_LANGUAGE );
-            _sbDocument.append( "\n```" );
+            appendBlock( "\n```" );
 
             if ( strLanguage != null && ! strLanguage.trim(  ).isEmpty(  ) )
             {
@@ -172,19 +175,20 @@ public class XDoc2MarkdownHandler extends DefaultHandler
             }
 
             _sbDocument.append( "\n" );
+            _sbPreText = new StringBuilder(  );
             _bPRE = true;
         } 
         else if ( qName.equalsIgnoreCase( TAG_LI ) )
         {
-            _sbDocument.append( "\n* " );
+            appendBlock( "\n* " );
         } 
         else if ( qName.equalsIgnoreCase( TAG_UL ) )
         {
-            _sbDocument.append( "\n " );
+            appendBlock( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_TABLE ) )
         {
-            _sbDocument.append( "\n" );
+            appendBlock( "\n" );
             _nTableRowCount = 0;
             _nTableColumnCount = 0;
         } 
@@ -237,20 +241,20 @@ public class XDoc2MarkdownHandler extends DefaultHandler
         } 
         else if ( qName.equalsIgnoreCase( TAG_PARAGRAPH ) )
         {
-            trimSpacesAtEnd( _sbDocument );
-            _sbDocument.append( "\n" );
+            appendBlock( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_PRE ) )
         {
-            _sbDocument.append( "\n```\n" );
+            _sbDocument.append( trimBlankLines( _sbPreText.toString(  ) ) ).append( "\n```\n" );
             _bPRE = false;
         } 
         else if ( qName.equalsIgnoreCase( TAG_UL ) )
         {
-            _sbDocument.append( "\n" );
+            appendBlock( "\n" );
         } 
         else if ( qName.equalsIgnoreCase( TAG_TR ) )
         {
+            trimSpacesAtEnd( _sbDocument );
             _sbDocument.append( "|\n" );
 
             if ( _nTableRowCount == 1 )
@@ -292,7 +296,7 @@ public class XDoc2MarkdownHandler extends DefaultHandler
 
         if ( _bPRE )
         {
-            _sbDocument.append( strText );
+            _sbPreText.append( strText );
         }
         else
         {
@@ -339,9 +343,7 @@ public class XDoc2MarkdownHandler extends DefaultHandler
      */
     private void openMarkup( String strMarkup )
     {
-        StringBuilder sbBuffer = getCurrentBuffer(  );
-        trimSpacesAtEnd( sbBuffer );
-        sbBuffer.append( " " ).append( strMarkup );
+        getCurrentBuffer(  ).append( strMarkup );
         _bMarkupOpened = true;
     }
 
@@ -353,8 +355,31 @@ public class XDoc2MarkdownHandler extends DefaultHandler
     {
         StringBuilder sbBuffer = getCurrentBuffer(  );
         trimSpacesAtEnd( sbBuffer );
-        sbBuffer.append( strMarkup ).append( " " );
+        sbBuffer.append( strMarkup );
         _bMarkupOpened = false;
+    }
+
+    /**
+     * Append a block separator. A Markdown block always starts on its own line, so
+     * the spaces ending the previous line are dropped.
+     * @param strSeparator The separator, starting with a line break
+     */
+    private void appendBlock( String strSeparator )
+    {
+        trimSpacesAtEnd( _sbDocument );
+        _sbDocument.append( strSeparator );
+    }
+
+    /**
+     * Removes the blank lines at the beginning and at the end of a verbatim block.
+     * They come from the line break following the opening tag and from the
+     * indentation of the closing tag, and they are not part of the code.
+     * @param strText The content of the block
+     * @return The content without its surrounding blank lines
+     */
+    private static String trimBlankLines( String strText )
+    {
+        return strText.replaceAll( "^(?:[ \\t]*\\r?\\n)+", "" ).replaceAll( "(?:\\r?\\n[ \\t]*)+$", "" );
     }
 
     /**
@@ -402,16 +427,15 @@ public class XDoc2MarkdownHandler extends DefaultHandler
     private void appendAnchor(  )
     {
         String strText = _sbAnchorText.toString(  ).trim(  );
-        trimSpacesAtEnd( _sbDocument );
 
         if ( _strLink == null )
         {
-            _sbDocument.append( " " ).append( strText ).append( " " );
+            _sbDocument.append( strText );
 
             return;
         }
 
-        _sbDocument.append( " [" ).append( strText ).append( "](" ).append( _strLink.trim(  ) ).append( ") " );
+        _sbDocument.append( "[" ).append( strText ).append( "](" ).append( _strLink.trim(  ) ).append( ")" );
     }
 
     /**

@@ -207,6 +207,74 @@ public class XDoc2MarkdownHandlerTest
     }
 
     /**
+     * Test that a markup followed by a punctuation is not separated from it
+     * @throws java.lang.Exception
+     */
+    public void testMarkupBeforePunctuation(  ) throws Exception
+    {
+        String strDocument = convert( "volutpat. <strong>bold text</strong>, quis nostrud" );
+
+        assertTrue( strDocument.contains( "**bold text**, quis" ) );
+    }
+
+    /**
+     * Test that a markup inside parentheses keeps them tight
+     * @throws java.lang.Exception
+     */
+    public void testMarkupInsideParentheses(  ) throws Exception
+    {
+        String strDocument = convert( "the goal (<code>readme</code>) creates the file" );
+
+        assertTrue( strDocument.contains( "(`readme`) creates" ) );
+    }
+
+    /**
+     * Test that a link is not separated from the punctuation around it
+     * @throws java.lang.Exception
+     */
+    public void testAnchorInsideParentheses(  ) throws Exception
+    {
+        String strDocument = convert( "see (<a href=\"http://a.b\">the guide</a>) for details" );
+
+        assertTrue( strDocument.contains( "([the guide](http://a.b)) for details" ) );
+    }
+
+    /**
+     * Test that a code block holds no blank line, the line break of the opening tag
+     * and the indentation of the closing tag are not part of the code
+     * @throws java.lang.Exception
+     */
+    public void testCodeBlockHasNoSurroundingBlankLine(  ) throws Exception
+    {
+        String strDocument = convert( "<pre language=\"java\">\ncode\n            </pre>" );
+
+        assertTrue( strDocument.contains( "```java\ncode\n```" ) );
+    }
+
+    /**
+     * Test that a code block written with a CDATA section holds no blank line
+     * @throws java.lang.Exception
+     */
+    public void testCodeBlockWithCData(  ) throws Exception
+    {
+        String strDocument = convert( "<pre language=\"html\">\n<![CDATA[\n<table/>\n]]>\n            </pre>" );
+
+        assertTrue( strDocument.contains( "```html\n<table/>\n```" ) );
+    }
+
+    /**
+     * Test that no line of the document ends with a space
+     * @throws java.lang.Exception
+     */
+    public void testNoLineEndsWithASpace(  ) throws Exception
+    {
+        String strDocument = convert( "Lorem ipsum \n            <ul>\n                <li>List item 1</li>\n" +
+            "            </ul>\n            <table><tr><th>Column Title 1</th></tr></table>\n            " );
+
+        assertFalse( strDocument.contains( " \n" ) );
+    }
+
+    /**
      * Test that a paragraph does not end with a space, two trailing spaces are a
      * hard line break in Markdown
      * @throws java.lang.Exception
