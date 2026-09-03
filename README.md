@@ -1,4 +1,8 @@
-!["build status"]("http://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=tools-maven-xdoc2md-plugin-deploy")
+![](https://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=tools-maven-xdoc2md-plugin-deploy)
+[![Alerte](https://dev.lutece.paris.fr/sonar/api/project_badges/measure?project=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin&metric=alert_status)](https://dev.lutece.paris.fr/sonar/dashboard?id=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin)
+[![Line of code](https://dev.lutece.paris.fr/sonar/api/project_badges/measure?project=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin&metric=ncloc)](https://dev.lutece.paris.fr/sonar/dashboard?id=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin)
+[![Coverage](https://dev.lutece.paris.fr/sonar/api/project_badges/measure?project=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin&metric=coverage)](https://dev.lutece.paris.fr/sonar/dashboard?id=fr.paris.lutece.plugins%3Axdoc2md-maven-plugin)
+
 # xDoc2md Maven Plugin
 
 ## Introduction
@@ -23,14 +27,36 @@ Then go into your project's directory where you want to create or update the `RE
 
 Type the following command to generate the README.md :
 
-```
+```shell
 
  mvn fr.paris.lutece.tools:xdoc2md-maven-plugin:readme
                     
 ```
 
+## Syntax highlighting
 
-[Maven documentation and reports](http://dev.lutece.paris.fr/plugins/xdoc2md-maven-plugin/)
+Add a `language` attribute to a `pre` element to get the generated code block highlighted.
+
+The value is copied as is into the Markdown fenced code block, so any language supported by GitHub can be used.
+
+```xml
+
+
+<div class="source">
+    <pre language="java">
+public void foo( String name ) {
+    System.out.println( name );
+}
+    </pre>
+</div>
+
+                    
+```
+
+A `pre` element without this attribute is converted into a code block without any language, exactly as before.
+
+
+[Maven documentation and reports](https://dev.lutece.paris.fr/plugins/xdoc2md-maven-plugin/)
 
 
 
