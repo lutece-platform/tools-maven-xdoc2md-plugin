@@ -263,6 +263,53 @@ public class XDoc2MarkdownHandlerTest
     }
 
     /**
+     * Test that a br element is converted into a Markdown line break. It used to be
+     * ignored, so the line break wanted by the author was lost.
+     * @throws java.lang.Exception
+     */
+    public void testLineBreak(  ) throws Exception
+    {
+        String strDocument = convert( "Form modification:<br/>Step modification:" );
+
+        assertTrue( strDocument.contains( "Form modification:  \nStep modification:" ) );
+    }
+
+    /**
+     * Test that a line break is dropped where it has nothing to break
+     * @throws java.lang.Exception
+     */
+    public void testUselessLineBreak(  ) throws Exception
+    {
+        assertFalse( convert( "Lorem ipsum<br/>" ).contains( "ipsum  " ) );
+        assertFalse( convert( "<br/>Lorem ipsum" ).contains( "  \n" ) );
+        assertFalse( convert( "Lorem<br/>\n            <br/>ipsum" ).contains( "  \n  \n" ) );
+    }
+
+    /**
+     * Test that a nested list is indented, every item used to be generated at the
+     * same level
+     * @throws java.lang.Exception
+     */
+    public void testNestedList(  ) throws Exception
+    {
+        String strDocument = convert( "<ul>\n    <li>Level 1<ul>\n        <li>Level 2<ul>\n" +
+            "            <li>Level 3</li>\n        </ul>\n        </li>\n    </ul>\n    </li>\n</ul>" );
+
+        assertTrue( strDocument.contains( "\n* Level 1\n    * Level 2\n        * Level 3\n" ) );
+    }
+
+    /**
+     * Test that a flat list is unchanged
+     * @throws java.lang.Exception
+     */
+    public void testFlatListIsNotIndented(  ) throws Exception
+    {
+        String strDocument = convert( "<ul>\n    <li>Item 1</li>\n    <li>Item 2</li>\n</ul>" );
+
+        assertTrue( strDocument.contains( "\n* Item 1\n* Item 2\n" ) );
+    }
+
+    /**
      * Test that no line of the document ends with a space
      * @throws java.lang.Exception
      */
